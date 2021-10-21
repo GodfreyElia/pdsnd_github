@@ -1,0 +1,195 @@
+# Bikeshare data analysis
+## By Godfrey Nkolokosa
+
+**Introduction**
+
+```{r}
+library(readr)
+library(dplyr)
+library(purrr)
+library(ggplot2)
+library(ggthemes)
+library(lubridate)
+#LOADING DATASETS into "tibble" data.frame
+ca <- print(read_csv("chicago.csv")) #tibble only prints first 10 rows
+ny <- print(read_csv("new-york-city.csv"))
+wa <- print(read_csv("washington.csv"))
+
+
+#DATA INSPECTION 1
+cat("SUMMARY STATISTIC\n")
+
+ca.summary <- print(summary(ca))
+ny.summary <- print(summary(ny))
+wa.summary <- print(summary(wa))
+
+names(ca) # inspecting variable names
+
+names.all <- c("ID","Start_Time","End_Time","Trip_Duration","Start_Station",
+               "End_Station","User_Type","Gender","Birth_Year") #creating new names without spaces
+
+#Correcting column names to avoid spaces for easy indexing
+names(ca) <- names.all
+names(ny) <- names.all
+names(wa) <- names.all
+```
+
+**QUESTION 1**
+```{r}
+#Using a histogram of trip duration, inspect the distribution of the datasets. Look out for outliers and facet by gender.
+#Histogram CHICAGO
+ca.summary #summary shows that 75% of observations travelled less than 1500 seconds but the largest case is about 90,000. Very skewed
+
+ggplot(aes(x=Trip_Duration), data = ca%>%filter(!is.na(Gender)))+
+  geom_histogram(binwidth = 100, color = "black", fill = "#F79420")+
+  labs(title = "Trip Durations Histogram: Chicago", y= "Frequency", x = "Trip Duration (Seconds)")+
+  scale_x_continuous(limits = c(0,10000), breaks = seq(0,10000,2000))+
+  theme(panel.background = element_rect(fill="white")) #majority of people travelled < 10,000s
+
+#Faceted by Gender
+ggplot(aes(x=Trip_Duration), data = ca%>%filter(!is.na(Gender)))+
+  geom_histogram(binwidth = 100, color = "black", fill = "#7BCCB5")+
+  labs(title = "Trip Durations Histogram: Chicago", y= "Frequency", x = "Trip Duration (Seconds)")+
+  scale_x_continuous(limits = c(0,10000), breaks = seq(0,10000,2000))+
+  facet_wrap(~Gender)+
+  theme(panel.background = element_rect(fill="white"))
+
+#FINDING: Data is right skewed, and there are more males than females 
+
+#HISTOGRAM NY
+
+ny.summary
+ggplot(aes(x=Trip_Duration), data = ny%>%filter(!is.na(Gender)))+
+  geom_histogram(binwidth = 100, color = "black", fill = "#F79420")+
+  labs(title = "Trip Durations Histogram: New York", y= "Frequency", x = "Trip Duration (Seconds)")+
+  scale_x_continuous(limits = c(0,10000), breaks = seq(0,10000,2000))+
+  theme(panel.background = element_rect(fill="white"))
+
+#FACET by Gender
+ny.summary
+ggplot(aes(x=Trip_Duration), data = ny%>%filter(!is.na(Gender)))+
+  geom_histogram(binwidth = 100, color = "black", fill = "#7BCCB5")+
+  labs(title = "Trip Durations Histogram: New York", y= "Frequency", x = "Trip Duration (Seconds)")+
+  scale_x_continuous(limits = c(0,10000), breaks = seq(0,10000,2000))+
+  facet_wrap(~Gender)+
+  theme(panel.background = element_rect(fill="white"))
+
+#Finding: Data is right skewed, and there are more males than females
+
+#HISTOGRAM WA
+wa.summary
+ggplot(aes(x=Trip_Duration), data = wa)+
+  geom_histogram(binwidth = 100, color = "black", fill = "#F79420")+
+  labs(title = "Trip Durations Histogram: Washington", y= "Frequency", x = "Trip Duration (Seconds)")+
+  scale_x_continuous(limits = c(0,10000), breaks = seq(0,10000,2000))+
+  theme(panel.background = element_rect(fill="white"))
+#Finding: Data is right skewed, and no gender variable is given for faceting
+
+#part b:
+#Correct the Washington Data by removing outliers and creating a normalized trip duration column
+
+wa.normal<- wa%>%filter(Trip_Duration <= 10000) #selecting cases with Trip duration < 10000 to remove outliers
+normal_X <- function(x){
+  m <- min(x)
+  r <- max(x)-min(x)
+  return((x-m)/r)
+}
+
+wa.normal <- wa.normal %>% mutate(Normal.Trip_Du = normal_X(Trip_Duration))
+print(wa.normal)
+#Normalized dataset
+```
+
+**QUESTION 2**
+```{r}
+#Which months and days of the week do people prefer, and how long do they cycle on average?
+
+ca.dates <- ymd_hms(ca$Start_Time) #reformating start_time into standard time format
+
+dates.frame <- data.frame(nWeekDay=wday(ca.dates), WeekDay=wday(ca.dates,label=TRUE),
+                          Year=year(ca.dates), nMonth=month(ca.dates), Month=month(ca.dates,label=TRUE)) #creating a data.frame that stores each value on the standard date format
+
+ca.with.dates <- tibble(cbind(ca,dates.frame)) #adding the date data to the original dataset
+
+#(a) By Day of the Week
+by.DOW <- print(na.omit(ca.with.dates) %>%group_by(WeekDay)%>%
+  summarise(Count = n(), Average = mean(Trip_Duration)))
+
+    #plotting 1
+ggplot(aes(x = WeekDay, y = Count), data = by.DOW)+
+  geom_bar (color = "black", stat = "identity")+
+  labs(title = "Daily Data of Number of People Cycling",
+       x = "Day of the Week",
+       y = "Count")+
+  theme(panel.background = element_rect(fill="white"))
+
+#FINDING:  People generally do not have a preferred day for going cycling or taking a bike.
+
+
+ggplot(aes(x = WeekDay, y = Average), data = by.DOW)+
+  geom_point(color = "blue")+
+  geom_line(color = "red", group=1)+
+  labs(title = "Daily Average Cycling Duration",
+       x = "Day of the Week",
+       y = "Average Duration")+
+  theme(panel.background = element_rect(fill="white"))
+#Finding: On average people cycle longer times on Sunday and less on Tuesdays and Saturday
+
+#(b) BY Month
+by.month <- print(na.omit(ca.with.dates) %>%group_by(Month)%>%
+  summarise(Count = n(), Average = mean(Trip_Duration)))
+
+    #plotting 2
+ggplot(aes(x = Month, y = Count), data = by.month)+
+  geom_line (color = "red", group = 1)+
+  geom_point(color = "blue")+
+  labs(title = "Monthly Data of Number of People Cycling",
+       x = "Month",
+       y = "Count")+
+  theme(panel.background = element_rect(fill="white"))
+#Finding: Jan is the least popular month, and Jun the most popular. Could be that people enjoy cycling in summer
+
+ggplot(aes(x = Month, y = Average), data = by.month)+
+  geom_point (color = "blue")+
+  geom_line(color = "red", group = 1)+
+  labs(title = "Monthly Average Cyclying Duration",
+       x = "Month",
+       y = "Average Duration")+
+  theme(panel.background = element_rect(fill="white"))
+#Finding: Lowest average trip duration is in March and highest is in June. The trend is upwards
+
+#LOOPS
+#Creating a loop to help identify people who are subscribers and cycle more than 2 hours (2*60*60s).
+#People who fit the above criteria qualify for reward. Create an extra column to identify them
+
+Reward <- c() #creating empty vector to collect values
+
+for (r in 1:nrow(ca.with.dates)){
+  if(ca.with.dates$User_Type[r]=="Subscriber" & ca.with.dates$Trip_Duration[r]>3600){
+    Reward <- c(Reward, "Qualified")
+  }else{
+    Reward <- c(Reward, " Not qualified")
+  }
+}
+
+ca.with.dates$Reward <- Reward
+
+print(ca.with.dates)
+```
+
+**QUESTION 3**
+```{r}
+#explore the relationship between the variables, particularly trip duration and day of the week, month, year, and birth year in the chicago data.
+
+ca.corrplot <- print(cor(ca.with.dates[,c("Trip_Duration", "Birth_Year", "nWeekDay","nMonth","Year")], use = "complete.obs")) #determining correlation
+
+#Regressinon
+legr <- lm(ca.with.dates$Trip_Duration ~ ca.with.dates$Birth_Year+
+             ca.with.dates$Year + ca.with.dates$WeekDay+
+                          ca.with.dates$Month) 
+summary(legr)
+
+#FINDING: There's no strong relationship between trip duration and any of the variables. The correlation results are less than .1 and the p values indicate statistical insignificance based on the signficance level criteria given.
+```
+
+#THE END
