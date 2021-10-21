@@ -1,5 +1,6 @@
 # Bikeshare data analysis
-## By Godfrey ELIA Nkolokosa
+
+## Godfrey Nkolokosa
 
 **Introduction**
 
@@ -16,7 +17,7 @@ ny <- print(read_csv("new-york-city.csv"))
 wa <- print(read_csv("washington.csv"))
 
 
-#DATA INSPECTION 1: To view the summary statistics of each dataset
+#Data inspection
 cat("SUMMARY STATISTIC\n")
 
 ca.summary <- print(summary(ca))
