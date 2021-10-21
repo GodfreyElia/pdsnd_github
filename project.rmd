@@ -1,5 +1,5 @@
 # Bikeshare data analysis
-## By Godfrey Nkolokosa
+## By Godfrey E. Nkolokosa
 
 **Introduction**
 
