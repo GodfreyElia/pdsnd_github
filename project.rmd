@@ -123,7 +123,7 @@ ggplot(aes(x = WeekDay, y = Count), data = by.DOW)+
        y = "Count")+
   theme(panel.background = element_rect(fill="white"))
 
-#FINDING:  People generally do not have a preferred day for going cycling or taking a bike.
+#FINDING:  People generally do not have a preference for the day which they go cycling or bike riding.
 
 
 ggplot(aes(x = WeekDay, y = Average), data = by.DOW)+
