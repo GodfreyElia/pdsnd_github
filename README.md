@@ -1,18 +1,16 @@
->**Note**: Please **fork** the current Udacity repository so that you will have a **remote** repository in **your** Github account. Clone the remote repository to your local machine. Later, as a part of the project "Post your Work on Github", you will push your proposed changes to the remote repository in your Github account.
+### Date Created: Aug 21, 2021.
+This project was created on Thursday, 21 August 2021.
 
-### 2021-10-21 10:00 BST
-Include the date you created this project and README file.
-
-### R Project
-Replace the Project Title
+### Project Title: Analyzing Bikeshare Data Using R Programming
 
 ### Description
-This project involved analysing trip journeys of people using bikeshare facility
+This project involved analysing trip journeys of people using the bikeshare facility. Different R codes have been utilized to analyze among others: the relationship between day of the week and the number of people cycling.
 
 ### Files used
+The project has used the following datasets to answer the various questions regarding Bikeshare. The data is available by cities in which the facility was used.
 chicago.csv
 new-york-city.csv
 washington.csv
 
-### Credits
-It's important to give proper credit. Add links to any repo that inspired you or blogposts you consulted.
+### CREDITS:
+Special thanks to the Udacity team for putting all the data used in this project together. More information about the project and the datasets can be found on the Udacity website through this link: https://www.udacity.com/
