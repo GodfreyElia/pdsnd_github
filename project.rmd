@@ -16,7 +16,7 @@ ny <- print(read_csv("new-york-city.csv"))
 wa <- print(read_csv("washington.csv"))
 
 
-#DATA INSPECTION 1
+#DATA INSPECTION 1: Basically trying to look into the statistical summaries of each dataset
 cat("SUMMARY STATISTIC\n")
 
 ca.summary <- print(summary(ca))
