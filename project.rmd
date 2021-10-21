@@ -1,5 +1,5 @@
 # Bikeshare data analysis
-## By Godfrey Nkolokosa
+## By Godfrey Elia Nkolokosa
 
 **Introduction**
 
@@ -16,7 +16,7 @@ ny <- print(read_csv("new-york-city.csv"))
 wa <- print(read_csv("washington.csv"))
 
 
-#DATA INSPECTION 1
+#DATA INSPECTION 1: To view the summary statistics of each dataset
 cat("SUMMARY STATISTIC\n")
 
 ca.summary <- print(summary(ca))
@@ -46,7 +46,7 @@ ggplot(aes(x=Trip_Duration), data = ca%>%filter(!is.na(Gender)))+
   scale_x_continuous(limits = c(0,10000), breaks = seq(0,10000,2000))+
   theme(panel.background = element_rect(fill="white")) #majority of people travelled < 10,000s
 
-#Faceted by Gender
+#Faceting by Gender
 ggplot(aes(x=Trip_Duration), data = ca%>%filter(!is.na(Gender)))+
   geom_histogram(binwidth = 100, color = "black", fill = "#7BCCB5")+
   labs(title = "Trip Durations Histogram: Chicago", y= "Frequency", x = "Trip Duration (Seconds)")+
