@@ -17,8 +17,8 @@ ny <- print(read_csv("new-york-city.csv"))
 wa <- print(read_csv("washington.csv"))
 
 
-#Data inspection
-cat("SUMMARY STATISTIC\n")
+
+#DATA INSPECTION 1: Basically trying to look into the statistical summaries of each dataset
 
 ca.summary <- print(summary(ca))
 ny.summary <- print(summary(ny))
@@ -173,7 +173,7 @@ for (r in 1:nrow(ca.with.dates)){
   }
 }
 
-ca.with.dates$Reward <- Reward
+ca.with.dates$Prize <- Reward
 
 print(ca.with.dates)
 ```
